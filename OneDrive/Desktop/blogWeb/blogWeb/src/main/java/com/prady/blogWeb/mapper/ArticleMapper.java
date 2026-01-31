@@ -7,22 +7,39 @@ import com.prady.blogWeb.dto.response.TagResponse;
 import com.prady.blogWeb.entity.Article;
 import com.prady.blogWeb.entity.Comment;
 import com.prady.blogWeb.entity.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+
+@Component
 public class ArticleMapper {
 
-    public static ArticleIdResponse articleToArticleIdResponse(Article article){
+    private final UserMapper userMapper;
+    private final TagMapper tagMapper;
+    private final CommentMapper commentMapper;
+    private final ProblemMapper problemMapper;
+
+    public ArticleMapper(UserMapper userMapper, CommentMapper commentMapper, TagMapper tagMapper, ProblemMapper problemMapper) {
+        this.userMapper = userMapper;
+        this.commentMapper = commentMapper;
+        this.tagMapper = tagMapper;
+        this.problemMapper = problemMapper;
+
+    }
+
+    public  ArticleIdResponse articleToArticleIdResponse(Article article){
 
         ArticleIdResponse articleIdResponse = new ArticleIdResponse();
         articleIdResponse.setId(article.getId());
         return articleIdResponse;
     }
 
-    public static ArticleResponse articleToArticleResponse(Article article){
+    public  ArticleResponse articleToArticleResponse(Article article){
 
         ArticleResponse articleResponse = new ArticleResponse();
         articleResponse.setId(article.getId());
@@ -39,7 +56,7 @@ public class ArticleMapper {
         Set<Tag> tags = article.getTags();
         if(tags != null && !tags.isEmpty()){
             for(Tag tag : tags){
-                tagResponses.add(TagMapper.tagToTagResponse(tag));
+                tagResponses.add(tagMapper.tagToTagResponse(tag));
             }
         }
         articleResponse.setTags(tagResponses);
@@ -47,7 +64,7 @@ public class ArticleMapper {
         //For getting author response
         if (article.getUser() != null) {
             articleResponse.setAuthor(
-                    UserMapper.userToAuthorResponse(article.getUser())
+                    userMapper.userToAuthorResponse(article.getUser())
             );
         }
 
@@ -57,7 +74,7 @@ public class ArticleMapper {
         List<Comment> comments = article.getComments();
         if(comments != null && !comments.isEmpty()){
             for(Comment comment : comments){
-                commentResponses.add(CommentMapper.commentToCommentResponse(comment));
+                commentResponses.add(commentMapper.commentToCommentResponse(comment));
             }
         }
         articleResponse.setComments(commentResponses);
@@ -65,7 +82,7 @@ public class ArticleMapper {
         //For getting problem
         if (article.getProblem() != null) {
             articleResponse.setProblem(
-                    ProblemMapper.problemToProblemResponse(article.getProblem())
+                    problemMapper.problemToProblemResponse(article.getProblem())
             );
         }
 

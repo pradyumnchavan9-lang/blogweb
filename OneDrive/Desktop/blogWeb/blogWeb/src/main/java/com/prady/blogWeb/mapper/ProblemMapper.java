@@ -2,10 +2,13 @@ package com.prady.blogWeb.mapper;
 
 import com.prady.blogWeb.dto.response.ProblemResponse;
 import com.prady.blogWeb.entity.Problem;
+import org.springframework.stereotype.Component;
 
+
+@Component
 public class ProblemMapper {
 
-    public static ProblemResponse problemToProblemResponse(Problem problem){
+    public  ProblemResponse problemToProblemResponse(Problem problem){
 
         ProblemResponse problemResponse = new ProblemResponse();
         problemResponse.setId(problem.getId());
