@@ -1,5 +1,7 @@
 package com.prady.blogWeb.mapper;
 
+import com.prady.blogWeb.dto.request.CreateArticle;
+import com.prady.blogWeb.dto.request.UpdateArticle;
 import com.prady.blogWeb.dto.response.ArticleIdResponse;
 import com.prady.blogWeb.dto.response.ArticleResponse;
 import com.prady.blogWeb.dto.response.CommentResponse;
@@ -10,10 +12,8 @@ import com.prady.blogWeb.entity.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
 
 
 @Component
@@ -91,4 +91,36 @@ public class ArticleMapper {
         return articleResponse;
 
     }
+
+    public Article createArticleToArticle(CreateArticle createArticle){
+        Article article = new Article();
+        article.setTitle(createArticle.getTitle());
+        article.setArticleType(createArticle.getArticleType());
+        article.setContent(createArticle.getContent());
+        article.setDifficulty(createArticle.getDifficulty());
+        article.setCreatedAt(LocalDateTime.now());
+        article.setUpdatedAt(LocalDateTime.now());
+        article.setSummary(createArticle.getSummary());
+        article.setComments(new ArrayList<>());
+        return article;
+    }
+
+    public Article updateArticleToArticle(UpdateArticle updateArticle,Article article){
+
+        if(updateArticle.getDifficulty() != null){
+            article.setDifficulty(updateArticle.getDifficulty());
+        }
+        if (updateArticle.getArticleType() != null){
+            article.setArticleType(updateArticle.getArticleType());
+        }
+        if(updateArticle.getSummary() != null){
+            article.setSummary(updateArticle.getSummary());
+        }
+        if(updateArticle.getContent() != null){
+            article.setContent(updateArticle.getContent());
+        }
+
+        return article;
+    }
+
 }
