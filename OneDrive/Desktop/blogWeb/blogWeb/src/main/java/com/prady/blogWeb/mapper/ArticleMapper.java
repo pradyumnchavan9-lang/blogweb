@@ -98,8 +98,6 @@ public class ArticleMapper {
         article.setArticleType(createArticle.getArticleType());
         article.setContent(createArticle.getContent());
         article.setDifficulty(createArticle.getDifficulty());
-        article.setCreatedAt(LocalDateTime.now());
-        article.setUpdatedAt(LocalDateTime.now());
         article.setSummary(createArticle.getSummary());
         article.setComments(new ArrayList<>());
         return article;
