@@ -67,7 +67,7 @@ public class CommentService {
         String username = auth.getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "User not found: " + username
+                        "User not Found: " + username
                 ));
 
 
@@ -97,7 +97,7 @@ public class CommentService {
                         "Comment Not Found: " + commentId
                 ));
 
-        if(!comment.getUser().equals(user)){
+        if(!comment.getUser().equals(user) && !user.getRole().equals("ADMIN")){
          throw new UnauthorizedActionException("You are not Allowed to delete this comment");
         }
 

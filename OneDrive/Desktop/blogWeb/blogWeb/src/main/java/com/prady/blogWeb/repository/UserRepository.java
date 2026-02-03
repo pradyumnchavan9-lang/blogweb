@@ -1,5 +1,6 @@
 package com.prady.blogWeb.repository;
 
+import com.prady.blogWeb.entity.Article;
 import com.prady.blogWeb.entity.Tag;
 import com.prady.blogWeb.entity.User;
 import org.springframework.data.domain.Page;
@@ -14,4 +15,5 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     public Optional<User> findByUsername(String username);
+
 }

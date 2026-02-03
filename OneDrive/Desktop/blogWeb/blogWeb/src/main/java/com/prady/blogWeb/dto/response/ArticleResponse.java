@@ -14,7 +14,6 @@ public class ArticleResponse {
     private String difficulty;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private List<CommentResponse> comments;
     private AuthorResponse author;
     private Set<TagResponse> tags;
     private ProblemResponse problem;
@@ -84,14 +83,6 @@ public class ArticleResponse {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public List<CommentResponse> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<CommentResponse> comments) {
-        this.comments = comments;
     }
 
     public AuthorResponse getAuthor() {

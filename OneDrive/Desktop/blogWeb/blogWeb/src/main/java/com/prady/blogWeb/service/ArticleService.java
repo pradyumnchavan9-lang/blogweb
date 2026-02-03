@@ -7,6 +7,8 @@ import com.prady.blogWeb.dto.response.ArticleResponse;
 import com.prady.blogWeb.entity.Article;
 import com.prady.blogWeb.entity.Tag;
 import com.prady.blogWeb.entity.User;
+import com.prady.blogWeb.exception.ResourceNotFoundException;
+import com.prady.blogWeb.exception.UnauthorizedActionException;
 import com.prady.blogWeb.mapper.ArticleMapper;
 import com.prady.blogWeb.repository.ArticleRepository;
 import com.prady.blogWeb.repository.TagRepository;
@@ -79,16 +81,28 @@ public class ArticleService {
     //Update article
     public ArticleResponse updateArticleById(Long id, UpdateArticle updateArticle){
 
-        Article article = articleRepository.findById(id).get();
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Article not found with id: " + id
+                ));
 
         //Check if logged-in user and articles author match
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
-        User user = userRepository.findByUsername(username).orElse(null);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(
+                                "User not found with name: " + username
+                        )
+                );
 
-        if(article.getUser().equals(user)){
+        if(article.getUser().equals(user) || user.getRole().equals("ADMIN")){
             article = articleMapper.updateArticleToArticle(updateArticle,article);
             articleRepository.save(article);
+        }else{
+            throw new UnauthorizedActionException(
+                    "User doesn't have permission to edit this article"
+            );
         }
 
         return articleMapper.articleToArticleResponse(article);
@@ -97,11 +111,18 @@ public class ArticleService {
     //Delete Article
     public void deleteArticle(Long id){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Article article = articleRepository.findById(id).get();
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Article not found with id: " + id
+                ));
         String username = auth.getName();
         User user = userRepository.findByUsername(username).orElse(null);
-        if(user != null && article.getUser().equals(user)){
+        if(user != null && (article.getUser().equals(user) || user.getRole().equals("ADMIN"))){
             articleRepository.deleteById(id);
+        }else{
+            throw new UnauthorizedActionException(
+                    "User doesn't have permission to delete this article"
+            );
         }
     }
 
@@ -111,5 +132,22 @@ public class ArticleService {
 
         return articleRepository.findAll(pageable)
                 .map(article -> articleMapper.articleToArticleResponse(article));
+    }
+
+    //Add Tag to Article
+    public void addTagToArticle(Long id,Long tagId){
+
+        Tag tag = tagRepository.findById(tagId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Tag Not Found with id "+ tagId
+                ));
+
+        Article article =articleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Article Not Found with id "+ id
+                ));
+
+        article.addTag(tag);
+        articleRepository.save(article);
     }
 }

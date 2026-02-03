@@ -61,5 +61,11 @@ public class ArticleController {
             return ResponseEntity.ok().body(articleService.getAllArticles(pageable));
     }
 
+    //Add tag to Article
+    @PostMapping("/{id}/{tagId}")
+    public ResponseEntity<?> addTagToArtice(@PathVariable Long id, @PathVariable Long tagId){
+        articleService.addTagToArticle(id,tagId);
+        return ResponseEntity.ok().build();
+    }
 
 }

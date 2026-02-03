@@ -68,17 +68,6 @@ public class ArticleMapper {
             );
         }
 
-
-        //For getting list of commentResponses
-        List<CommentResponse> commentResponses = new ArrayList<>();
-        List<Comment> comments = article.getComments();
-        if(comments != null && !comments.isEmpty()){
-            for(Comment comment : comments){
-                commentResponses.add(commentMapper.commentToCommentResponse(comment));
-            }
-        }
-        articleResponse.setComments(commentResponses);
-
         //For getting problem
         if (article.getProblem() != null) {
             articleResponse.setProblem(
