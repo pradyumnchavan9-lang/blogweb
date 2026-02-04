@@ -1,18 +1,21 @@
-import './App.css';
-import ArticleList from './ArticleList';
+import { Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Navbar from "./components/Navbar";
+
 function App() {
-
-    const articles =[
-                        { id: 1, title: "How to learn DSA" },
-                        { id: 2, title: "Spring Boot for Beginners" },
-                        { id: 3, title: "React from Scratch" }
-                    ]
-
   return (
-           <div>
-                <h1>Articles</h1>
-                 <ArticleList articles = {articles} />
-          </div>
+  <>
+    <Navbar />
+
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+    </Routes>
+
+  </>
   );
 }
 
