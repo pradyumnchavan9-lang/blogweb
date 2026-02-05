@@ -1,8 +1,64 @@
+import { useEffect,useState } from "react";
+import api from "../api/api";
+import "./Home.css";
+
+
 function Home() {
+
+    const [articles,setArticles] = useState([]);
+
+    useEffect(() => {
+        fetchArticles();
+    },[]);
+
+    async function fetchArticles(){
+
+        try{
+            const response = await api.get("/article");
+            setArticles(response.data.content);
+        }catch(error){
+            console.error("Failed To Load Articles");
+        }
+    }
+
+    function logout(){
+        localStorage.removeItem("token");
+        window.location.reload();
+    }
+
+    const isLoggedIn = !!localStorage.getItem("token");
+
   return(
              <div>
-               <h1>Welcome to DevBlog</h1>
-               <p>Learn. Write. Share.</p>
+               <h1>Home</h1>
+               {isLoggedIn ?
+                    (<button onClick = {logout}>Logout</button>) :
+                        (
+                            <>
+                                <a href = "/login">Login</a> | <a href = "/register">Register</a>
+                            </>
+                        )
+               }
+
+               <hr />
+
+               <div className = "container">
+               <h2>Articles</h2>
+
+               <ul>
+                    {articles.map(article => (
+                        <li className = "article-card" key = {article.id}>
+                                <h3>{article.title}</h3>
+                                <p className = "article-meta">
+                                    Author Name:-{article.author.username}<br></br>
+                                    Difficulty • {article.difficulty}
+                                </p>
+                                <p>{article.summary}</p>
+                        </li>
+                    ))}
+
+               </ul>
+                </div>
              </div>
          );
 }
