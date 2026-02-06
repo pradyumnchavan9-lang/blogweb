@@ -3,6 +3,7 @@ import api from "../api/api";
 import "./Home.css";
 
 
+
 function Home() {
 
     const [articles,setArticles] = useState([]);
@@ -40,6 +41,13 @@ function Home() {
                         )
                }
 
+                {isLoggedIn && (
+                  <>
+                    <br /><br />
+                    <a href="/articles/new">Create Article</a>
+                  </>
+                )}
+
                <hr />
 
                <div className = "container">
@@ -48,7 +56,10 @@ function Home() {
                <ul>
                     {articles.map(article => (
                         <li className = "article-card" key = {article.id}>
-                                <h3>{article.title}</h3>
+                                <h3>
+                                    <a href = {`/articles/${article.id}`}>{article.title}
+                                    </a>
+                                </h3>
                                 <p className = "article-meta">
                                     Author Name:-{article.author.username}<br></br>
                                     Difficulty • {article.difficulty}
