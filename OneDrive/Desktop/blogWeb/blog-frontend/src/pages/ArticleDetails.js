@@ -8,17 +8,32 @@ function ArticleDetails(){
     const {id} = useParams();
     const [article,setArticle] = useState(null);
     const [comment,setComment] = useState("");
+    const [currentUser,setCurrentUser] = useState({});
 
 
     useEffect(()=>{
         fetchArticle();
+        fetchCurrentUser();
     },[]);
 
+    // Fetching Articles
     async function fetchArticle(){
         const response = await api.get(`/article/${id}`);
         setArticle(response.data);
     }
 
+
+    //Fetch Logged-In user
+    async function fetchCurrentUser(){
+        try{
+            const response = await api.get("/user/me");
+            setCurrentUser(response.data);
+        }catch(error){
+            console.log("Failed to load user");
+        }
+    }
+
+    //Handling Comment Submit
     async function handleCommentSubmit(e){
         e.preventDefault();
         await api.post(`/article/${id}/comments`,{
@@ -29,8 +44,21 @@ function ArticleDetails(){
         fetchArticle();
     }
 
+    //Handling Comment Delete
+    async function handlingDeleteComment(commentId){
+        try{
+            await api.delete(`/article/${id}/comments/${commentId}`);
+            fetchArticle();
+        }catch(error){
+            console.log(error);
+        }
+
+    }
+
     if(!article) return <p className = "loading-text"> Loading... </p>;
 
+    console.log("Current User:", currentUser);
+    console.log("Comments:", article.comments);
 
     return(
             <div className="article-container">
@@ -58,6 +86,16 @@ function ArticleDetails(){
                                 <span className="comment-text">
                                     {c.content}
                                 </span>
+                                { currentUser.id === c.author.id || currentUser.role === "USER" ?
+                                    (<button
+                                        className = "comment-delete"
+                                        onClick = {() => handlingDeleteComment(c.id)}
+                                    >
+                                    Delete
+                                    </button>
+                                    ) : null
+                                }
+
                             </div>
                         ))
                     }

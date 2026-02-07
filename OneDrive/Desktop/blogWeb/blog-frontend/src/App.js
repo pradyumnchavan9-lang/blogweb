@@ -5,6 +5,7 @@ import Register from "./pages/Register";
 import Navbar from "./components/Navbar";
 import CreateArticle from "./pages/CreateArticle.js";
 import ArticleDetails from "./pages/ArticleDetails.js";
+import AuthGuard from "./pages/AuthGuard";
 
 function App() {
   return (
@@ -15,7 +16,7 @@ function App() {
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/articles/new" element={<CreateArticle />} />
+      <Route path="/articles/new" element={<AuthGuard><CreateArticle /></AuthGuard>} />
       <Route path="/articles/:id" element={<ArticleDetails />} />
     </Routes>
 
