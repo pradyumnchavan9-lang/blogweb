@@ -15,8 +15,14 @@ import com.prady.blogWeb.repository.ArticleRepository;
 import com.prady.blogWeb.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -84,5 +90,15 @@ public class UserService {
         ));
         return articleRepository.findAllByUser(user,pageable)
                 .map(article -> articleMapper.articleToArticleResponse(article));
+    }
+
+    public UserResponse loggedInUser(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        User user = userRepo.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "User Not Found: " + username
+                ));
+        return userMapper.userToUserResponse(user);
     }
 }

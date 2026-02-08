@@ -75,6 +75,16 @@ public class ArticleMapper {
             );
         }
 
+        //For getting CommentResponse from Comments
+        List<CommentResponse> commentResponses = new ArrayList<>();
+        List<Comment> comments = article.getComments();
+        if(comments != null && !comments.isEmpty()){
+            for(Comment comment : comments){
+                commentResponses.add(commentMapper.commentToCommentResponse(comment));
+
+            }
+        }
+        articleResponse.setComments(commentResponses);
 
 
         return articleResponse;

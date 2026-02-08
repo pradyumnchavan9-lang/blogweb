@@ -17,6 +17,7 @@ public class ArticleResponse {
     private AuthorResponse author;
     private Set<TagResponse> tags;
     private ProblemResponse problem;
+    private List<CommentResponse> comments;
 
 
     //-------------------------Getter And Setter
@@ -107,5 +108,12 @@ public class ArticleResponse {
 
     public void setProblem(ProblemResponse problem) {
         this.problem = problem;
+    }
+
+    public List<CommentResponse> getComments() {
+        return comments;
+    }
+    public void setComments(List<CommentResponse> comments) {
+        this.comments = comments;
     }
 }

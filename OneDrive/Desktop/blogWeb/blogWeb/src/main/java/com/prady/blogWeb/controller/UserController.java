@@ -40,4 +40,9 @@ public class UserController {
                                                                  @PageableDefault(page = 0, size = 5) Pageable pageable){
         return ResponseEntity.ok().body(userService.getUserArticles(userId,pageable));
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserResponse> loggedInUser(){
+        return ResponseEntity.ok().body(userService.loggedInUser());
+    }
 }

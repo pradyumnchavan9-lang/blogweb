@@ -2,13 +2,16 @@ package com.prady.blogWeb.controller;
 
 
 import com.prady.blogWeb.dto.request.CreateArticle;
+import com.prady.blogWeb.dto.request.QuestionRequest;
 import com.prady.blogWeb.dto.request.UpdateArticle;
 import com.prady.blogWeb.dto.response.ArticleResponse;
-import com.prady.blogWeb.entity.Article;
+import com.prady.blogWeb.dto.response.ChatResponse;
 import com.prady.blogWeb.service.ArticleService;
+import com.prady.blogWeb.service.ChatService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,9 +20,11 @@ import org.springframework.web.bind.annotation.*;
 public class ArticleController {
 
     private final ArticleService articleService;
+    private final ChatService chatService;
 
-    public ArticleController(ArticleService articleService) {
+    public ArticleController(ArticleService articleService, ChatService chatService) {
         this.articleService = articleService;
+        this.chatService = chatService;
     }
 
 
@@ -66,6 +71,14 @@ public class ArticleController {
     public ResponseEntity<?> addTagToArtice(@PathVariable Long id, @PathVariable Long tagId){
         articleService.addTagToArticle(id,tagId);
         return ResponseEntity.ok().build();
+    }
+
+
+    //Get Question to be answered by The Bot
+    @PostMapping("/{articleId}/chat")
+    public ResponseEntity<ChatResponse> getAnswer(@RequestBody QuestionRequest questionRequest, @PathVariable Long articleId){
+
+        return new ResponseEntity<>(chatService.getAnswer(questionRequest,articleId), HttpStatus.OK);
     }
 
 }

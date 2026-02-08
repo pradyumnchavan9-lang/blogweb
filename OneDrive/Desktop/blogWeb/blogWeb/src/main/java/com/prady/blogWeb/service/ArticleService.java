@@ -4,13 +4,17 @@ package com.prady.blogWeb.service;
 import com.prady.blogWeb.dto.request.CreateArticle;
 import com.prady.blogWeb.dto.request.UpdateArticle;
 import com.prady.blogWeb.dto.response.ArticleResponse;
+import com.prady.blogWeb.dto.response.CommentResponse;
 import com.prady.blogWeb.entity.Article;
+import com.prady.blogWeb.entity.Comment;
 import com.prady.blogWeb.entity.Tag;
 import com.prady.blogWeb.entity.User;
 import com.prady.blogWeb.exception.ResourceNotFoundException;
 import com.prady.blogWeb.exception.UnauthorizedActionException;
 import com.prady.blogWeb.mapper.ArticleMapper;
+import com.prady.blogWeb.mapper.CommentMapper;
 import com.prady.blogWeb.repository.ArticleRepository;
+import com.prady.blogWeb.repository.CommentRepository;
 import com.prady.blogWeb.repository.TagRepository;
 import com.prady.blogWeb.repository.UserRepository;
 import org.springframework.data.domain.Page;
@@ -20,9 +24,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class ArticleService {
@@ -31,13 +33,18 @@ public class ArticleService {
     private final UserRepository userRepository;
     private final ArticleRepository articleRepository;
     private final TagRepository tagRepository;
+    private final CommentRepository commentRepository;
+    private final CommentMapper commentMapper;
 
     public ArticleService(ArticleMapper articleMapper,UserRepository userRepository
-            ,ArticleRepository articleRepository, TagRepository tagRepository) {
+            ,ArticleRepository articleRepository, TagRepository tagRepository
+    ,CommentRepository commentRepository, CommentMapper commentMapper) {
         this.articleMapper = articleMapper;
         this.userRepository = userRepository;
         this.articleRepository = articleRepository;
         this.tagRepository = tagRepository;
+        this.commentRepository = commentRepository;
+        this.commentMapper = commentMapper;
     }
 
 
@@ -45,7 +52,14 @@ public class ArticleService {
     public ArticleResponse getArticle(Long id){
 
         Article article = articleRepository.findById(id).orElse(null);
-        return articleMapper.articleToArticleResponse(article);
+        List<Comment>  comments = commentRepository.findAllByArticleId(id);
+        List<CommentResponse> commentResponses = new ArrayList<>();
+        for(Comment comment : comments){
+            commentResponses.add(commentMapper.commentToCommentResponse(comment));
+        }
+        ArticleResponse articleResponse = articleMapper.articleToArticleResponse(article);
+        articleResponse.setComments(commentResponses);
+        return articleResponse;
     }
 
 
