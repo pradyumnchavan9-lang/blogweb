@@ -18,6 +18,7 @@ public class ArticleResponse {
     private Set<TagResponse> tags;
     private ProblemResponse problem;
     private List<CommentResponse> comments;
+    private long views;
 
 
     //-------------------------Getter And Setter
@@ -115,5 +116,13 @@ public class ArticleResponse {
     }
     public void setComments(List<CommentResponse> comments) {
         this.comments = comments;
+    }
+
+    public long getViews() {
+        return views;
+    }
+
+    public void setViews(long views) {
+        this.views = views;
     }
 }

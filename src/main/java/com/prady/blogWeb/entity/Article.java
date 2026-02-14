@@ -25,6 +25,7 @@ public class Article {
     private String difficulty;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private long views;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -185,5 +186,13 @@ public class Article {
 
     public void setProblem(Problem problem) {
         this.problem = problem;
+    }
+
+    public long getViews() {
+        return views;
+    }
+
+    public void setViews(long views) {
+        this.views = views;
     }
 }

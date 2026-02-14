@@ -29,9 +29,16 @@ public class ArticleController {
     }
 
 
+    //Get Article BY Article-Id
+    @GetMapping("/get-article/{articleId}")
+    public ResponseEntity<ArticleResponse> getArticleById(@PathVariable Long articleId){
+
+        return new ResponseEntity<>(articleService.getArticleById(articleId),HttpStatus.OK);
+    }
+
     //Get Article by User
     @GetMapping("/{userId}")
-    public ResponseEntity<Page<ArticleResponse>> getArticle(@PathVariable Long userId,
+    public ResponseEntity<PageResponseDto<ArticleResponse>> getArticle(@PathVariable Long userId,
                                                             @PageableDefault(page = 0,size = 10) Pageable pageable ){
 
         return ResponseEntity.ok().body(articleService.getArticle(userId,pageable));
@@ -82,5 +89,6 @@ public class ArticleController {
 
         return new ResponseEntity<>(chatService.getAnswer(questionRequest,articleId), HttpStatus.OK);
     }
+
 
 }

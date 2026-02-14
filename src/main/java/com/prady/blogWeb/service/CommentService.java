@@ -59,8 +59,8 @@ public class CommentService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Article not found with id" + articleId
                 ));
-        //Set the article to commment
-        comment.setArticle(article);;
+        //Set the article to comment
+        comment.setArticle(article);
 
         //Get the current user
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

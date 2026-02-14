@@ -50,6 +50,7 @@ public class ArticleMapper {
         articleResponse.setCreatedAt(article.getCreatedAt());
         articleResponse.setUpdatedAt(article.getUpdatedAt());
         articleResponse.setSummary(article.getSummary());
+        articleResponse.setViews(article.getViews());
 
         //For getting set of tagResponses
         Set<TagResponse> tagResponses = new HashSet<>();

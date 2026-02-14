@@ -41,6 +41,7 @@ public class ArticleService {
     private final CommentMapper commentMapper;
     private final RedisService redisService;
 
+
     public ArticleService(ArticleMapper articleMapper,UserRepository userRepository
             ,ArticleRepository articleRepository, TagRepository tagRepository
             ,CommentRepository commentRepository, CommentMapper commentMapper
@@ -56,14 +57,33 @@ public class ArticleService {
 
 
     //Get Article from user
-    public Page<ArticleResponse> getArticle(Long userId,Pageable pageable){
+    public PageResponseDto<ArticleResponse> getArticle(Long userId,Pageable pageable){
 
+        String key = "articles-userId:" + userId
+                    + "page:" + pageable.getPageNumber()
+                    + "size:" + pageable.getPageSize();
+        PageResponseDto<ArticleResponse> cache = redisService.get(key,PageResponseDto.class);
+        if(cache != null){
+            return cache;
+        }
         User user =  userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        Page<Article> articles = articleRepository.findAllByUser(user,pageable);
-        Page<ArticleResponse> articleResponsePage = articles.map(articleMapper::articleToArticleResponse);
+        Page<Article> articlesPage = articleRepository.findAllByUser(user,pageable);
+        Page<ArticleResponse> articles = articlesPage.map(articleMapper::articleToArticleResponse);
+        PageResponseDto<ArticleResponse> dto = new PageResponseDto<>();
+        try
+        {
+            dto.setContent(articles.getContent());
+            dto.setPage(articles.getNumber());
+            dto.setSize(articles.getSize());
+            dto.setTotalElements(articles.getTotalElements());
+            dto.setTotalPages(articles.getTotalPages());
+            redisService.set(key,dto,300l);
 
-        return articleResponsePage;
+        }catch (Exception e){
+            System.err.println("Error in getting articles");
+        }
+        return dto;
     }
 
 
@@ -90,7 +110,8 @@ public class ArticleService {
         article.setTags(tags);
 
          articleRepository.save(article);
-
+         redisService.deleteByPrefix("get-articles:");
+         redisService.deleteByPrefix("articles-userId");
          ArticleResponse articleResponse = articleMapper.articleToArticleResponse(article);
          return articleResponse;
 
@@ -145,6 +166,7 @@ public class ArticleService {
     }
 
 
+    //Get articles
     public PageResponseDto<ArticleResponse> getAllArticles(Pageable pageable) {
 
         String key = "get-articles:page" + pageable.getPageNumber()
@@ -189,5 +211,30 @@ public class ArticleService {
 
         article.addTag(tag);
         articleRepository.save(article);
+    }
+
+
+    //Get Article By ID
+    public ArticleResponse getArticleById(Long articleId) {
+
+        String key = "get-article-by-id:" + articleId;
+        String key2 = "article-views:" + articleId;
+
+        Long views = redisService.getViews(key2);
+        views = (views != null) ? views : 0;
+
+        ArticleResponse cache =  redisService.get(key,ArticleResponse.class);
+        if(cache != null){
+            cache.setViews(views + cache.getViews());
+            return cache;
+        }
+
+
+        cache =  articleMapper.articleToArticleResponse(articleRepository.findById(articleId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Article not found with id: " + articleId
+                )));
+        redisService.set(key,cache,300L);
+        return cache;
     }
 }
